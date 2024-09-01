@@ -288,7 +288,7 @@ if [ -n "$on_github" ]; then
   echo "label: $label"
 
   # Create a merge request on github
-  gh pr create  --assignee "${assignee_github}" --fill-verbose --reviewer "${reviewer_github}" --label "$label"
+  gh pr create  --assignee "${assignee_github}" --fill-verbose --reviewer "${reviewer_github}" --label "$label" 
   rc="$?"
   if [ "$rc" -ne 0 ]; then
     # check if the PR already exists
@@ -308,7 +308,7 @@ if [ -n "$on_github" ]; then
   # Get the last pipeline status
   last_action_status=$(get_last_action_status)
   echo "last_action_status: $last_action_status"
-  if [ "$last_action_status" != "success" ] && [ "$last_action_status" != "" ]; then
+  if [ "$last_action_status" != "success" ] && [ "$last_action_status" != "" ] && [ "$last_action_status" !=  "skipped" ]; then
     echo "The pipeline failed."
     exit 1
   fi
@@ -333,7 +333,7 @@ if [ -n "$on_github" ]; then
   echo "pr_id: $pr_id"
 
   # Auto merge mr
-  gh pr merge --squash --delete-branch "$pr_id"
+  gh pr merge --squash --delete-branch "$pr_id" --auto
   rc="$?"
   if [ "$rc" -ne 0 ]; then
     echo "Failed to merge the merge request."
@@ -347,7 +347,7 @@ if [ -n "$on_github" ]; then
   # Get the last pipeline status
   last_action_status=$(get_last_action_status)
   echo "last_action_status: $last_action_status"
-  if [ "$last_action_status" != "success" ] && [ "$last_action_status" != "" ]; then
+  if [ "$last_action_status" != "success" ] && [ "$last_action_status" != "" ] && [ "$last_action_status" !=  "skipped" ]; then
     echo "The pipeline failed."
     exit 1
   fi
