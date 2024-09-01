@@ -282,16 +282,13 @@ fi
 if [ -n "$on_github" ]; then
   # Choose labels for the MR
   # 
+  cmd="gum choose --header \"Choose labels:\" --limit=1"
   gh_labels=$(gh label list --json name | jq .[].name | tr '\n' ' ')
-  labels=$(gum choose --header "Choose labels:" --limit=3 $gh_labels)
-  # convert labels to options for gh pr create command
-  for label in $labels; do
-    lst_labels="${lst_labels} --label ${label}"
-  done
-  echo "lst_labels: $lst_labels"
+  label=$(eval "$cmd" "$gh_labels")
+  echo "label: $label"
 
   # Create a merge request on github
-  gh pr create  --assignee "${assignee_github}" --fill-verbose --reviewer "${reviewer_github}" $lst_labels
+  gh pr create  --assignee "${assignee_github}" --fill-verbose --reviewer "${reviewer_github}" --label "$label"
   rc="$?"
   if [ "$rc" -ne 0 ]; then
     # check if the PR already exists
